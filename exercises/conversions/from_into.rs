@@ -18,7 +18,6 @@ impl Default for Person {
   }
 }
 
-// I AM NOT DONE
 // Your task is to complete this implementation
 // in order for the line `let p = Person::from("Mark,20")` to compile
 // Please note that you'll need to parse the age component into a `usize`
@@ -36,11 +35,17 @@ impl From<&str> for Person {
   fn from(s: &str) -> Person {
     match s {
       "" => Person::default(),
-      "_" => {
+      _ => {
         let parsed: Vec<&str> = s.split(",").collect();
+        let validate = parsed[1].parse::<i32>();
         let mut new_guy = Person::default();
-        new_guy.name = parsed[0].to_string();
-        new_guy.age = parsed[1].to_string().parse()::<i32>.unwrap() as usize;
+        match validate {
+          Ok(ok) => {
+            new_guy.name = parsed[0].to_string();
+            new_guy.age = parsed[1].to_string().parse::<i32>().unwrap() as usize
+          }
+          Err(e) => (),
+        }
         new_guy
       }
     }

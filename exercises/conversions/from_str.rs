@@ -6,11 +6,10 @@ use std::str::FromStr;
 
 #[derive(Debug)]
 struct Person {
-    name: String,
-    age: usize,
+  name: String,
+  age: usize,
 }
 
-// I AM NOT DONE
 // Steps:
 // 1. If the length of the provided string is 0, then return an error
 // 2. Split the given string on the commas present in it
@@ -19,31 +18,46 @@ struct Person {
 // If while parsing the age, something goes wrong, then return an error
 // Otherwise, then return a Result of a Person object
 impl FromStr for Person {
-    type Err = String;
-    fn from_str(s: &str) -> Result<Person, Self::Err> {
+  type Err = String;
+  fn from_str(s: &str) -> Result<Person, Self::Err> {
+    if s.is_empty() {
+      return Err("Empty string".to_string());
     }
+    let parsed: Vec<&str> = s.split(",").collect();
+    let validate = parsed[1].parse::<i32>();
+    match validate {
+      Ok(ok) => {
+        let mut new_guy = Person {
+          name: parsed[0].to_string(),
+          age: validate.unwrap() as usize,
+        };
+        return Ok(new_guy);
+      }
+      Err(e) => return Err("Age could not be parsed".to_string()),
+    }
+  }
 }
 
 fn main() {
-    let p = "Mark,20".parse::<Person>().unwrap();
-    println!("{:?}", p);
+  let p = "Mark,20".parse::<Person>().unwrap();
+  println!("{:?}", p);
 }
 
 #[cfg(test)]
 mod tests {
-    use super::*;
+  use super::*;
 
-    #[test]
-    fn empty_input() {
-        assert!("".parse::<Person>().is_err());
-    }
-    #[test]
-    fn good_input() {
-        assert!("John,32".parse::<Person>().is_ok());
-    }
-    #[test]
-    #[should_panic]
-    fn missing_age() {
-        "John".parse::<Person>().unwrap();
-    }
+  #[test]
+  fn empty_input() {
+    assert!("".parse::<Person>().is_err());
+  }
+  #[test]
+  fn good_input() {
+    assert!("John,32".parse::<Person>().is_ok());
+  }
+  #[test]
+  #[should_panic]
+  fn missing_age() {
+    "John".parse::<Person>().unwrap();
+  }
 }
